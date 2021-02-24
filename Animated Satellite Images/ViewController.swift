@@ -3,8 +3,8 @@
 //  Animated Satellite Images
 //
 //  Author: Charles Ryan Barrett
-//  Date: 2/23/2021
-//  Description: A simple iOS app that plays an animated sequence of sattelite images at various speeds. For CSC 308 at EKU
+//  Date: 2/24/2021
+//  Description: A simple iOS app that plays an animated sequence of sattelite images, in either visible or infrared, at various speeds. For CSC 308 at EKU
 //
 
 import UIKit
@@ -15,6 +15,9 @@ class ViewController: UIViewController {
     
     //Current animation speed
     var curSpeed = 1.0 //Default speed is 1.0 (fastest)
+    
+    //If animation is currently playing
+    var curPlaying = false //Need to know to keep animation playing when speed or image type is changed
     
     //Array to hold the visible images
     var visImg = [UIImage]()
@@ -30,7 +33,7 @@ class ViewController: UIViewController {
     //Label to relay current speed of frames
     @IBOutlet weak var curSpeedLabel: UILabel!
     
-    //This outlet is just for making the button look nicer
+    //play/stop button
     @IBOutlet weak var playBtn: UIButton!
     
     
@@ -44,6 +47,11 @@ class ViewController: UIViewController {
         else{
             display.animationImages = infImg
             display.image = infImg[0]
+        }
+        
+        //Restart animation if it was playing when image type was changed
+        if curPlaying{
+            display.startAnimating()
         }
 
     }
@@ -61,6 +69,9 @@ class ViewController: UIViewController {
             
             //Stop it
             display.stopAnimating()
+            
+            //Update curPlaying
+            curPlaying = false
             //Update button text
             playBtn.setTitle("Play", for: UIControl.State.normal)
         }
@@ -70,6 +81,9 @@ class ViewController: UIViewController {
             
             //Start it
             display.startAnimating()
+            //Update curPlaying
+            curPlaying = true
+            //Update button text
             playBtn.setTitle("Stop", for: UIControl.State.normal)
 
         }
@@ -79,18 +93,27 @@ class ViewController: UIViewController {
     //Function to change play speed
     func changeSpeed(newSpeed: Double){
 
-        curSpeed = newSpeed
+        curSpeed = Double(visImg.count)/newSpeed
         //visImg and infImg have the same number of images, so either can be counted
-        display.animationDuration = (curSpeed / (Double)(visImg.count))
-        
-//        print("Curspeed =" + String(curSpeed))
-//        print("count =" + String(visImg.count))
-//        print("curSpeed/count =" + String((curSpeed / Double(visImg.count))))
-
-                                          
+        display.animationDuration = (Double(visImg.count)/curSpeed)
         
         //Update the number of frames per second
-        curSpeedLabel.text = "Playback Speed: 14 Frames in " + String(Int(curSpeed)) + " Seconds"
+        
+        let preamble = "Playback Speed: \(visImg.count) Frames in "
+        
+        //If only 1 second, it should be singular and not plural
+        if newSpeed == 1{
+            curSpeedLabel.text = preamble + String(Int(newSpeed)) + " Second"
+        }
+        else{
+            curSpeedLabel.text = preamble + String(Int(newSpeed)) + " Seconds"
+        }
+        
+        
+        //Restart animation if it was already playing before speed was changed
+        if curPlaying{
+            display.startAnimating()
+        }
     }
     
     //This function loads the image arrays with the images
