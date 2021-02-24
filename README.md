@@ -3,7 +3,7 @@ Homework 4 for CSC 308 at EKU. A simple iOS app to display animated satellite im
 
 To run: download repository and either open in xcode or put on a compatible iOS device.
 
-At the top of the screen, there is the option of "Visible" and "Infrared" This switches between what image type will be displayed.
+At the top of the screen, there is the option of "Visible" and "Infrared". This switches between what image type will be displayed.
 
 Below the display of the images/animation is a label that will reflect the current speed the animation will play at.
 
